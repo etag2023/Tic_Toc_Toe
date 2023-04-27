@@ -30,19 +30,22 @@ class MainActivity : AppCompatActivity() {
         viewModelProvider()
         countDownTimer()
         binding.btnReset.setOnClickListener {
-            binding.winPlayer.text = "Win Player is : "
-            binding.lineView.translationX = 0f
-            binding.lineView.translationY = 0f
-            binding.lineView.visibility = View.GONE
-            setUpRecycler()
-            timer.cancel()
-            countDownTimer()
-
+            reset()
         }
 
 
     }
 
+    private fun reset()
+    {
+        binding.winPlayer.text = "Win Player is : "
+        binding.lineView.translationX = 0f
+        binding.lineView.translationY = 0f
+        binding.lineView.visibility = View.GONE
+        setUpRecycler()
+        timer.cancel()
+        countDownTimer()
+    }
     private fun viewModelProvider() {
         viewModel.finalResult.observe(this, Observer { result ->
             if (result.isWin) {
@@ -75,9 +78,10 @@ class MainActivity : AppCompatActivity() {
     {
         val builder = AlertDialog.Builder(this)
         builder.setTitle("Game Over!")
-        builder.setMessage("Your are game is Game Over!!")
+        builder.setMessage("Your play game is Game Over!!")
         builder.setPositiveButton("OK") { dialog, which ->
             dialog.dismiss()
+            reset()
         }
 
         builder.setCancelable(false)
