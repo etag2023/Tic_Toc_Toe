@@ -24,21 +24,18 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         viewModel = ViewModelProvider(this).get(TTTViewModel::class.java)
         setContentView(binding.root)
-
-
+        binding.currentPlayer.text = "Current Player : Player1"
         setUpRecycler()
         viewModelProvider()
         countDownTimer()
         binding.btnReset.setOnClickListener {
             reset()
         }
-
-
     }
 
     private fun reset()
     {
-        binding.winPlayer.text = "Win Player is : "
+        binding.winPlayer.text = ""
         binding.lineView.translationX = 0f
         binding.lineView.translationY = 0f
         binding.lineView.visibility = View.GONE
@@ -55,15 +52,17 @@ class MainActivity : AppCompatActivity() {
                 timer.cancel()
             }
         })
-
     }
 
     private fun setUpRecycler() {
         mAdapter = GridViewAdapter(createGrid())
         mAdapter.setOnClickListener(object : GridViewAdapter.OnClickListener {
-            override fun isCheck(status: Int, list: MutableList<TTT>) {
+
+            override fun isCheck(status: Int, currentPlayer: String, list: MutableList<TTT>) {
                 winItemList(status, list)
+                binding.currentPlayer.text = "Current Player : $currentPlayer"
             }
+
             override fun showToast(msg: String) {
                 Toast.makeText(this@MainActivity, msg.toString(), Toast.LENGTH_SHORT).show()
             }
@@ -90,93 +89,59 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun winItemList(status: Int, possibleWinList: MutableList<TTT>) {
-        if (possibleWinList.filter {
-                it.id in setOf(
-                    1,
-                    2,
-                    3
-                ) && it.check && it.status == status
-            }.size == 3) {
+
+
+        var possibleCondition1 =  possibleWinList.filter { it.id in setOf(1, 2, 3) && it.check && it.status == status }
+        var possibleCondition2 =  possibleWinList.filter { it.id in setOf(4, 5, 6) && it.check && it.status == status }
+        var possibleCondition3 =  possibleWinList.filter { it.id in setOf(7, 8, 9) && it.check && it.status == status }
+        var possibleCondition4 =  possibleWinList.filter { it.id in setOf(1, 4, 7) && it.check && it.status == status }
+        var possibleCondition5 =  possibleWinList.filter { it.id in setOf(2, 5, 8) && it.check && it.status == status }
+        var possibleCondition6 =  possibleWinList.filter { it.id in setOf(3, 6, 9) && it.check && it.status == status }
+        var possibleCondition7 =  possibleWinList.filter { it.id in setOf(1, 5, 9) && it.check && it.status == status }
+        var possibleCondition8 =  possibleWinList.filter { it.id in setOf(3, 5, 7) && it.check && it.status == status }
+
+        if (possibleCondition1.size == 3 ) {
             viewModel.setGameWin(true, status, true, possibleWinList)
             straightLine("top_H")
         }
 
-        if (possibleWinList.filter {
-                it.id in setOf(
-                    4,
-                    5,
-                    6
-                ) && it.check && it.status == status
-            }.size == 3) {
+        if (possibleCondition2.size == 3 ) {
             viewModel.setGameWin(true, status, true, possibleWinList)
             straightLine("middle_H")
         }
-        if (possibleWinList.filter {
-                it.id in setOf(
-                    7,
-                    8,
-                    9
-                ) && it.check && it.status == status
-            }.size == 3) {
+        if (possibleCondition3.size == 3 ) {
             viewModel.setGameWin(true, status, true, possibleWinList)
             straightLine("bottom_H")
         }
 
-        if (possibleWinList.filter {
-                it.id in setOf(
-                    1,
-                    4,
-                    7
-                ) && it.check && it.status == status
-            }.size == 3) {
+        if (possibleCondition4.size == 3 ) {
             viewModel.setGameWin(true, status, true, possibleWinList)
             straightLine("left_V")
         }
 
-        if (possibleWinList.filter {
-                it.id in setOf(
-                    2,
-                    5,
-                    8
-                ) && it.check && it.status == status
-            }.size == 3) {
+        if (possibleCondition5.size == 3 ) {
             viewModel.setGameWin(true, status, true, possibleWinList)
             straightLine("middle_V")
         }
-        if (possibleWinList.filter {
-                it.id in setOf(
-                    3,
-                    6,
-                    9
-                ) && it.check && it.status == status
-            }.size == 3) {
+        if (possibleCondition6.size == 3 ) {
             viewModel.setGameWin(true, status, true, possibleWinList)
             straightLine("right_V")
         }
-        if (possibleWinList.filter {
-                it.id in setOf(
-                    1,
-                    5,
-                    9
-                ) && it.check && it.status == status
-            }.size == 3) {
+        if (possibleCondition7.size == 3 ) {
             viewModel.setGameWin(true, status, true, possibleWinList)
             straightLine("top_right_to_bottom_left")
         }
-        if (possibleWinList.filter {
-                it.id in setOf(
-                    3,
-                    5,
-                    7
-                ) && it.check && it.status == status
-            }.size == 3) {
+        if (possibleCondition8.size == 3 ) {
             viewModel.setGameWin(true, status, true, possibleWinList)
             straightLine("top_left_to_bottom_right")
         }
 
-        if (possibleWinList.filter { it.check}.size >= 9)
+        if (possibleWinList.filter { it.check}.size >= 9  && (possibleCondition1.size != 3  && possibleCondition2.size != 3   && possibleCondition3.size != 3
+                    && possibleCondition4.size != 3   && possibleCondition5.size != 3   && possibleCondition6.size != 3
+                    && possibleCondition1.size != 3   && possibleCondition8.size != 3))
         {
             gameOver()
+            timer.cancel()
         }
 
     }

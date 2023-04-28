@@ -26,7 +26,7 @@ class GridViewAdapter(val itemlist: MutableList<TTT>) :
                     else {
                         item.check = true
                         item.status = if (player_status) 1 else 2
-                        mClickListener?.isCheck(if (player_status) 1 else 2, itemlist)
+                        mClickListener?.isCheck(if (player_status) 1 else 2,if (player_status) "Player2" else "Player1", itemlist)
                         player_status = if (player_status) {
                             imageView.setImageResource(R.drawable.circle_svgrepo_com)
                             false
@@ -54,7 +54,7 @@ class GridViewAdapter(val itemlist: MutableList<TTT>) :
     override fun getItemCount(): Int = itemlist.size
 
     interface OnClickListener {
-        fun isCheck(status: Int, list: MutableList<TTT>)
+        fun isCheck(status: Int,currentPlayer : String, list: MutableList<TTT>)
         fun showToast(msg: String)
     }
 
